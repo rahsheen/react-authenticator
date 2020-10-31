@@ -1,4 +1,5 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
+import { SignIn } from '../components/sign-in';
 
 const localStorageKey = '__react_authenticator_token__';
 
@@ -43,7 +44,7 @@ const AuthProvider = ({ children, authClient }: AuthProviderProps) => {
 
   // Initial Auth Failed. Register Login.
   if (user === null) {
-    return <h2>Permission Denied. Please Login.</h2>;
+    return <SignIn authClient={authClient} />;
   }
 
   const login = () => authClient.login(setUser);
