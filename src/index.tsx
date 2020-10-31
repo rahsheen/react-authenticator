@@ -1,3 +1,3 @@
-import * as React from 'react';
-export { AuthProvider } from 'src/auth-context';
+export { Authenticator } from './components/authenticator';
+export { useAuth } from './context/auth-context'
 

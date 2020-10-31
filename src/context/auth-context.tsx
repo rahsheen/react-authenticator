@@ -1,21 +1,33 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
+
+const localStorageKey = '__react_authenticator_token__';
 
 interface AuthContextType {
   user?: object;
-  login?: (data: object) => {};
+  login?: () => {};
   logout?: () => {};
   register?: () => {};
 }
 
 const AuthContext = createContext<AuthContextType>({});
 
-const AuthProvider = (props: any) => {
-  const [user, setUser] = useState();
+interface AuthProviderProps {
+  children: ReactNode;
+  authClient: any;
+}
+
+const AuthProvider = ({ children, authClient }: AuthProviderProps) => {
+  const [user, setUser] = useState<any>();
 
   // code for pre-loading the user's information if we have their token in
   // localStorage goes here
   useEffect(() => {
-    // Nada
+    const data = window.localStorage.getItem(localStorageKey);
+    if (!data) {
+      setUser(null);
+    } else {
+      setUser(data);
+    }
   }, []);
 
   // 🚨 this is the important bit.
@@ -24,25 +36,38 @@ const AuthProvider = (props: any) => {
   // whether or not we have a user token and if we do, then we render a spinner
   // while we go retrieve that user's information.
 
-  // We haven't tried to login yet
+  // We haven't initially tried to login yet...
   if (user === undefined) {
-    return (
-      <p>Loading...</p>
-    );
+    return <h2>Loading...</h2>;
   }
 
-  const login = () => {};
-  const register = () => {};
-  const logout = () => {};
+  // Initial Auth Failed. Register Login.
+  if (user === null) {
+    return <h2>Permission Denied. Please Login.</h2>;
+  }
+
+  const login = () => authClient.login(setUser);
+  const register = () => authClient.register(setUser);
+  const logout = () => authClient.logout();
 
   // Note: I'm not bothering to optimize this `value` with React.useMemo here
   // because this is the top-most component rendered in our app and it will very
   // rarely re-render/cause a performance problem.
-  const authContextValue = { user, login, register, logout };
+  const authContextValue = { user, login, logout, register };
 
-  return <AuthContext.Provider value={authContextValue} {...props} />;
+  return (
+    <AuthContext.Provider value={authContextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-const useAuth = () => React.useContext(AuthContext);
+const useAuth = () => {
+  const context = React.useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error(`useAuth must be used within an AuthProvider`);
+  }
+  return context;
+};
 
 export { AuthProvider, useAuth };
