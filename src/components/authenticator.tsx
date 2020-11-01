@@ -8,8 +8,8 @@ interface AuthenticatorProps {
 
 const defaultAuthClient = {
   login: (data: any) => Promise.resolve(data?.username),
-  logout: () => {},
-  register: () => {},
+  logout: () => Promise.resolve(null),
+  register: (data: any) => Promise.resolve(data?.username),
 }
 
 export function Authenticator({ children, authClient }: AuthenticatorProps) {

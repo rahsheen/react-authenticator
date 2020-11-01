@@ -7,7 +7,7 @@ interface AuthContextType {
   user?: object;
   login?: (data: any) => void;
   logout?: () => void;
-  register?: () => void;
+  register?: (data: any) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({});
@@ -21,8 +21,8 @@ const AuthProvider = ({ children, authClient }: AuthProviderProps) => {
   const [user, setUser] = useState<any>();
 
   const login = (data: any) => authClient.login(data).then(setUser);
-  const logout = () => authClient.logout();
-  const register = () => authClient.register(setUser);
+  const logout = () => authClient.logout().then(setUser);
+  const register = (data: any) => authClient.register(data).then(setUser);
 
   // code for pre-loading the user's information if we have their token in
   // localStorage goes here
