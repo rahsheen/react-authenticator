@@ -1,16 +1,35 @@
 import * as React from 'react';
 
 interface SignInProps {
-  authClient: any;
+  login: (object: { username: string; password: string }) => void;
 }
 
-export function SignIn({ authClient }: SignInProps) {
-  const signIn = authClient.signIn;
+export function SignIn({ login }: SignInProps) {
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    login({ username, password });
+  };
 
   return (
     <>
-      <h2>Please Sign In</h2>
-      <button onClick={signIn}>SignIn</button>
+      <form onSubmit={handleSubmit}>
+        <h2>Please Sign In</h2>
+        <input
+          type="text"
+          onChange={e => setUsername(e.target.value)}
+          value={username}
+        />
+        <input
+          type="password"
+          onChange={e => setPassword(e.target.value)}
+          value={password}
+        />
+        <button type="submit">SignIn</button>
+      </form>
     </>
   );
 }
