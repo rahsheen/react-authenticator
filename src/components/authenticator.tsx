@@ -6,13 +6,14 @@ interface AuthenticatorProps {
   authClient?: any;
 }
 
-class defaultAuthClient {
-  login = () => {};
-  logout = () => {};
-  signin = () => {};
+const defaultAuthClient = {
+  login: (data: any) => Promise.resolve(data?.username),
+  logout: () => {},
+  register: () => {},
 }
 
 export function Authenticator({ children, authClient }: AuthenticatorProps) {
+  
   return (
     <AuthProvider authClient={authClient || defaultAuthClient}>
       {children}

@@ -4,11 +4,12 @@ import * as ReactDOM from 'react-dom';
 import { Authenticator } from '../.';
 
 const App = () => {
-  return (
-    <Authenticator>
-      <h2>My App</h2>
-    </Authenticator>
-  );
+  return <h2>My App</h2>;
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <Authenticator>
+    <App />
+  </Authenticator>,
+  document.getElementById('root')
+);

@@ -5,9 +5,9 @@ const localStorageKey = '__react_authenticator_token__';
 
 interface AuthContextType {
   user?: object;
-  login?: () => {};
-  logout?: () => {};
-  register?: () => {};
+  login?: (data: any) => void;
+  logout?: () => void;
+  register?: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({});
@@ -20,10 +20,15 @@ interface AuthProviderProps {
 const AuthProvider = ({ children, authClient }: AuthProviderProps) => {
   const [user, setUser] = useState<any>();
 
+  const login = (data: any) => authClient.login(data).then(setUser);
+  const logout = () => authClient.logout();
+  const register = () => authClient.register(setUser);
+
   // code for pre-loading the user's information if we have their token in
   // localStorage goes here
   useEffect(() => {
     const data = window.localStorage.getItem(localStorageKey);
+
     if (!data) {
       setUser(null);
     } else {
@@ -44,12 +49,8 @@ const AuthProvider = ({ children, authClient }: AuthProviderProps) => {
 
   // Initial Auth Failed. Register Login.
   if (user === null) {
-    return <SignIn authClient={authClient} />;
+    return <SignIn login={login} />;
   }
-
-  const login = () => authClient.login(setUser);
-  const register = () => authClient.register(setUser);
-  const logout = () => authClient.logout();
 
   // Note: I'm not bothering to optimize this `value` with React.useMemo here
   // because this is the top-most component rendered in our app and it will very
