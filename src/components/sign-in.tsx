@@ -28,7 +28,7 @@ export function SignIn({ login }: SignInProps) {
           onChange={e => setPassword(e.target.value)}
           value={password}
         />
-        <button type="submit">SignIn</button>
+        <button disabled={!username.length && !password.length} type="submit">SignIn</button>
       </form>
     </>
   );
